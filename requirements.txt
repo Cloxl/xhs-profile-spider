@@ -1,0 +1,6 @@
+loguru
+openpyxl
+requests
+pandas
+PyExecJS
+beautifulsoup4
