@@ -30,11 +30,10 @@ cookies = {
     "a1": "",
     "web_session": "",
 }
-url = "https://www.xiaohongshu.com/user/profile/{}".format("ewg")
+user_id = "6688ff2400000000030301d0"
+url = f"https://www.xiaohongshu.com/user/profile/{user_id}"
 
 response = requests.get(url, headers=headers, cookies=cookies)
-
-
 soup = BeautifulSoup(response.text, 'html.parser')
 script_tags = soup.find_all('script')
 pattern = re.compile(r'window\.__INITIAL_STATE__\s*=\s*({.*})', re.DOTALL)
@@ -78,7 +77,6 @@ with open('./test.json', 'r', encoding='utf-8') as f:
     rows = []
     jc = json.loads(f.read())['user']
     data = jc['notes'][0]
-    user_id = jc['noteQueries'][0].get('userId', "")
 
 
 for result in data:
@@ -142,8 +140,12 @@ while True:
     response = requests.get(url=host+c, headers=headers, cookies=cookies)
 
     if not response.json()['data']:
-        logger.error("数据爬取失败!")
-        logger.error(f"状态码: {response.status_code}, 内容: {response.text}")
+        if response.status_code == 461:
+            logger.warning("出现验证码 请前往小红书网页端随意滑动过掉验证码再使用本脚本!")
+        else:
+            logger.error(f"状态码: {response.status_code}, 内容: {response.text}")
+
+        logger.error("数据爬取失败! 退出本次爬取, 当前内容已生成在output.xlsx")
         break
 
     data = response.json()["data"]["notes"]
