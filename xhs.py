@@ -119,14 +119,14 @@ def fetch(url: str) -> Any | None:
 
                 user_input = input("请输入选项: ")
                 if user_input.strip() == '':  # 检查空输入
-                    continue  # 继续请求而不跳过
+                    continue  # 跳过当前请求
 
                 try:
                     if int(user_input) == 0:
-                        return None  # 跳过当前请求
+                        return None  # 跳出当前请求
                 except ValueError:
                     logger.warning("输入无效，继续重试当前请求...")
-                    continue
+                    continue  # 跳过当前请求
 
             else:
                 logger.error(f"状态码: {resp.status_code}, 内容: {resp.text}")
