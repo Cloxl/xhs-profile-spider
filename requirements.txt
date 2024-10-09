@@ -4,3 +4,4 @@ requests
 pandas
 PyExecJS
 beautifulsoup4
+pillow
