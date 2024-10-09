@@ -3,6 +3,7 @@ import os
 import random
 import re
 import time
+from datetime import datetime
 from io import BytesIO
 from typing import Any
 
@@ -233,6 +234,7 @@ rows = sorted(rows, key=lambda x: int(x["点赞数量"]), reverse=True)
 
 
 # 对点赞数量大于指定内容的笔记获取更多数据 并进行下载
+pre_path = f"./output/{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}"
 for row in rows:
     if int(row['点赞数量']) < target_like_count:
         break  # 经过排序 前面的项一定 >= target_like_count
@@ -253,12 +255,12 @@ for row in rows:
     row['分享数量'] = user_note_info['interactInfo'].get('shareCount', '获取异常')
     row['评论数量'] = user_note_info['interactInfo'].get('commentCount', '获取异常')
 
-    pre_path = f"./output/{row['笔记ID']}"
+    pre_path += f"/{row['笔记ID']}"
     os.makedirs(pre_path, exist_ok=True)
 
     # 获取文章内容
     with open(f"{pre_path}/content.txt", "w", encoding="utf-8") as f:
-        f.write(user_note_info['desc'])
+        f.write(row['笔记标题'] + '\n\n' + user_note_info['desc'])
 
     # 下载webp图片使用pil转为jpg
     for i, img_urls in enumerate(user_note_info['imageList']):
@@ -275,7 +277,7 @@ for row in rows:
 
         im.save(f"{pre_path}/{i}.jpg", 'JPEG')
 
-    sleeper_time = random.randint(4, 10)
+    sleeper_time = random.randint(3, 10)
     logger.success(f"单次文章爬取成功, 延时{sleeper_time}秒后继续爬取")
     time.sleep(sleeper_time)
 
