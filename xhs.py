@@ -14,34 +14,39 @@ from bs4 import BeautifulSoup
 from loguru import logger
 from PIL import Image
 
+from EncryptHelper import EncryptHelper
+
 cookies = {
     "a1": "",
     "web_session": "",
 }
 user_id = ""
 target_like_count = 100
+formatter_type = "评论数量"
 
 tmp_json_path = './tmp.json'
 headers = {
-    "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-    "accept-language": "zh-CN,zh;q=0.9",
-    "cache-control": "no-cache",
-    "pragma": "no-cache",
-    "priority": "u=0, i",
-    "referer": "https://www.xiaohongshu.com/explore",
-    "sec-ch-ua": "\"Chromium\";v=\"128\", \"Not;A=Brand\";v=\"24\", \"Google Chrome\";v=\"128\"",
-    "sec-ch-ua-mobile": "?0",
-    "sec-ch-ua-platform": "\"Windows\"",
-    "sec-fetch-dest": "document",
-    "sec-fetch-mode": "navigate",
-    "sec-fetch-site": "same-origin",
-    "sec-fetch-user": "?1",
-    "upgrade-insecure-requests": "1",
-    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36"
+    'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+    'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8',
+    'cache-control': 'no-cache',
+    'origin': 'https://www.xiaohongshu.com',
+    'pragma': 'no-cache',
+    'priority': 'u=1, i',
+    'referer': 'https://www.xiaohongshu.com/',
+    'sec-ch-ua': '"Chromium";v="130", "Google Chrome";v="130", "Not?A_Brand";v="99"',
+    'sec-ch-ua-mobile': '?0',
+    'sec-ch-ua-platform': '"Windows"',
+    'sec-fetch-dest': 'empty',
+    'sec-fetch-mode': 'cors',
+    'sec-fetch-site': 'same-site',
+    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36',
 }
 if not user_id:
     logger.error("未提取到用户id 无法进行下一步检索!")
     exit(10086)
+if formatter_type not in ["点赞数量", "收藏数量", "分享数量", "评论数量"]:
+    logger.error(f"错误: 排序字段 '{formatter_type}' 无效")
+    exit(10087)
 
 # 处理获取index.html的数据
 url = f"https://www.xiaohongshu.com/user/profile/{user_id}"
@@ -141,28 +146,28 @@ if user_profile_data := extract_initial_state(response.text, tmp_json_path):
     user_profile_data = user_profile_data['user']['notes'][0]
 
 rows = []
-for profile_data in user_profile_data:
-    note_card = profile_data["noteCard"]
+for fetch_profile_data in user_profile_data:
+    note_card = fetch_profile_data["noteCard"]
     row = {
         "笔记标题": note_card.get("displayTitle", ""),
 
         "点赞数量": note_card['interactInfo'].get("likedCount", ""),
-        "收藏数量": note_card['interactInfo'].get("collectedCount", "未满足要求不爬取"),
-        "分享数量": note_card['interactInfo'].get("shareCount", "未满足要求不爬取"),
-        "评论数量": note_card['interactInfo'].get("commentCount", "未满足要求不爬取"),
+        "收藏数量": note_card['interactInfo'].get("collectedCount", 0),
+        "分享数量": note_card['interactInfo'].get("shareCount", 0),
+        "评论数量": note_card['interactInfo'].get("commentCount", 0),
 
         "内容形式": "图文" if note_card.get("type") == "normal" else "视频"
         if note_card.get("type") == "video" else note_card.get("type", ""),
 
         "用户昵称": note_card['user'].get("nickname", ""),
-        "笔记ID": profile_data.get("id", ""),
-        "笔记链接": f"https://www.xiaohongshu.com/explore/{profile_data['id']}?xsec_token{profile_data['xsecToken']}"
+        "笔记ID": fetch_profile_data.get("id", ""),
+        "笔记链接": f"https://www.xiaohongshu.com/explore/{fetch_profile_data['id']}?xsec_token{fetch_profile_data['xsecToken']}"
     }
     rows.append(row)
 
 if not rows:
     logger.error("首次爬取未获取到用户的任何内容")
-    exit(10086)
+    exit(10088)
 
 # 处理后续的笔记链接
 while True:
@@ -177,13 +182,9 @@ while True:
 
     c = f'{url}?{"&".join([f"{key}={value}" for key, value in params.items()])}'
 
-    with open('./static/xs.js', 'r', encoding='utf-8') as f:
-        xsxt = execjs.compile(f.read()).call(
-            "get_xsxt", c, "undefined", cookies['a1']
-        )
-
-        headers['x-s'] = xsxt['X-s']
-        headers['x-t'] = str(xsxt['X-t'])
+    t = str(round(int(time.time()) * 1000))
+    xs = EncryptHelper.encrypt_xs(url=c, a1=cookies["a1"], ts=t)
+    headers['x-s'], headers['x-t'] = xs, t
 
     # xsc并不检测 如果需要可以放开这里的注释
     with open('static/xs_common.js', 'r', encoding='utf-8') as f:
@@ -208,16 +209,21 @@ while True:
 
     data = response.json()["data"]["notes"]
     has_more = response.json()["data"]["has_more"]
-    for profile_data in data:
+    for fetch_profile_data in data:
         row = {
-            "笔记标题": profile_data.get("display_title", ""),
-            "点赞数量": profile_data['interact_info'].get("liked_count", ""),
-            "内容形式": "图文" if profile_data.get("type") == "normal" else "视频"
-            if profile_data.get("type") == "video" else profile_data.get("type", ""),
+            "笔记标题": fetch_profile_data.get("display_title", ""),
 
-            "用户昵称": profile_data['user'].get("nickname", ""),
-            "笔记ID": profile_data['note_id'],
-            "笔记链接": f"https://www.xiaohongshu.com/explore/{profile_data['note_id']}?xsec_token{profile_data['xsec_token']}"
+            "点赞数量": fetch_profile_data['interact_info'].get("liked_count", ""),
+            "收藏数量": fetch_profile_data['interact_info'].get("collectedCount", 0),
+            "分享数量": fetch_profile_data['interact_info'].get("shareCount", 0),
+            "评论数量": fetch_profile_data['interact_info'].get("commentCount", 0),
+
+            "内容形式": "图文" if fetch_profile_data.get("type") == "normal" else "视频"
+            if fetch_profile_data.get("type") == "video" else fetch_profile_data.get("type", ""),
+
+            "用户昵称": fetch_profile_data['user'].get("nickname", ""),
+            "笔记ID": fetch_profile_data['note_id'],
+            "笔记链接": f"https://www.xiaohongshu.com/explore/{fetch_profile_data['note_id']}?xsec_token{fetch_profile_data['xsec_token']}"
         }
         rows.append(row)
 
@@ -229,15 +235,12 @@ while True:
     logger.success(f"单次数据爬取成功, 延时{sleeper_time}秒后继续爬取")
     time.sleep(sleeper_time)
 
-# 排序 在excel文件中无需再次排序
-rows = sorted(rows, key=lambda x: int(x["点赞数量"]), reverse=True)
-
 
 # 对点赞数量大于指定内容的笔记获取更多数据 并进行下载
 pre_path = f"./output/{datetime.now().strftime('%Y-%m-%d-%H-%M-%S')}"
 for row in rows:
     if int(row['点赞数量']) < target_like_count:
-        break  # 经过排序 前面的项一定 >= target_like_count
+        continue
 
     response = fetch(row['笔记链接'])
     if not response:
@@ -250,15 +253,19 @@ for row in rows:
         logger.warning(f"网页请求成功 但是提取数据发生错误 跳过当前文章 {row['笔记ID']}")
         continue
 
-    user_note_info = user_note_data['note']['noteDetailMap'][row['笔记ID']]['note']
-    row['收藏数量'] = user_note_info['interactInfo'].get('collectedCount', '获取异常')
-    row['分享数量'] = user_note_info['interactInfo'].get('shareCount', '获取异常')
-    row['评论数量'] = user_note_info['interactInfo'].get('commentCount', '获取异常')
+    try:
+        user_note_info = user_note_data['note']['noteDetailMap'][row['笔记ID']]['note']
+        row['收藏数量'] = user_note_info['interactInfo'].get('collectedCount', 0)
+        row['分享数量'] = user_note_info['interactInfo'].get('shareCount', 0)
+        row['评论数量'] = user_note_info['interactInfo'].get('commentCount', 0)
+    except KeyError:
+        logger.warning("小红书返回了空的数据 具体问题还在排查中 \n 相关数据保存在output.xlsx \n 退出程序")
+        break
 
     pre_path += f"/{row['笔记ID']}"
     os.makedirs(pre_path, exist_ok=True)
 
-    # 获取文章内容
+    # 获取文章内容row['笔记ID']
     with open(f"{pre_path}/content.txt", "w", encoding="utf-8") as f:
         f.write(row['笔记标题'] + '\n\n' + user_note_info['desc'])
 
@@ -280,6 +287,12 @@ for row in rows:
     sleeper_time = random.randint(3, 10)
     logger.success(f"单次文章爬取成功, 延时{sleeper_time}秒后继续爬取")
     time.sleep(sleeper_time)
+
+try:
+    rows = sorted(rows, key=lambda x: int(x[formatter_type]), reverse=True)
+except ValueError:
+    logger.error(f"排序时出现问题，请确认字段 {formatter_type} 是否存在并且是可以转换为整数的内容")
+    exit(10089)
 
 df = pd.DataFrame(rows)
 df.to_excel('output.xlsx', index=False)
