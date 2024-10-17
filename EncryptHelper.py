@@ -17,6 +17,7 @@ class EncryptHelper:
     def get_md5(url: str) -> str:
         """
         根据传入的url和params生成MD5摘要
+
         :param url: API的url
         :return: MD5摘要
         """
@@ -41,6 +42,12 @@ class EncryptHelper:
 
     @staticmethod
     def base64_to_hex(encoded_data):
+        """
+        把加密后的payload转为16进制
+
+        :param encoded_data: 加密后的payload
+        :return:
+        """
         decoded_data = base64.b64decode(encoded_data)
         hex_string = ''.join([format(byte, '02x') for byte in decoded_data])
         return hex_string
