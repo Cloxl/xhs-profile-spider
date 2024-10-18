@@ -18,6 +18,24 @@
 - [ ] 增加小号池，实现批量抓取和发布
 - [ ] 自定义评论区演戏规则
 
+<details>
+    <summary  style="font-size: 20px; font-weight: bold;">如果你只需要纯算xs</summary>
+
+1. 下载 [EncryptHelper.py](https://raw.githubusercontent.com/Cloxl/xhs-profile-spider/refs/heads/master/EncryptHelper.py)
+2. 导入 `EncryptHelper` 类，并调用其方法计算 `xs`  
+
+```python  
+from EncryptHelper import EncryptHelper 
+
+EncryptHelper.encrypt_xs(url: str, a1: str, ts: str)
+```  
+
+- `url`: url去掉host后的字符串，例如：`/api/sns/web/v1/user_posted?num=?&cursor=?&user_id=?&image_formats=?`
+- `a1`: Cookies中的a1
+- `ts`: 毫秒时间戳(13位数字)
+
+</details>
+
 ## 安装步骤 🛠️
 
 请确保使用 `python >= 3.11`。
