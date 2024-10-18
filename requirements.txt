@@ -4,5 +4,5 @@ requests~=2.32.3
 pandas~=2.2.2
 PyExecJS~=1.5.1
 beautifulsoup4~=4.12.3
-pillow~=10.4.0
+pillow~=11.0.0
 pycryptodome~=3.21.0
