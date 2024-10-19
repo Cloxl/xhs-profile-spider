@@ -181,7 +181,9 @@ while True:
     }
 
     c = f'{url}?{"&".join([f"{key}={value}" for key, value in params.items()])}'
-
+    #如果需求为post
+    #data = json.dumps(params, separators=(", ", ": "), ensure_ascii=False)
+    #c = f'{url}{data}'
     t = str(round(int(time.time()) * 1000))
     xs = EncryptHelper.encrypt_xs(url=c, a1=cookies["a1"], ts=t)
     headers['x-s'], headers['x-t'] = xs, t
