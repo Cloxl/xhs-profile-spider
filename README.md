@@ -33,7 +33,7 @@ EncryptHelper.encrypt_xs(url: str, a1: str, ts: str)
 - `url`: url去掉host后的字符串，例如：`/api/sns/web/v1/user_posted?num=?&cursor=?&user_id=?&image_formats=?`
 - `a1`: Cookies中的a1
 - `ts`: 毫秒时间戳(13位数字)
-
+具体请查看 [#4](https://github.com/Cloxl/xhs-profile-spider/issues/4) 自行扩展
 </details>
 
 ## 安装步骤 🛠️
