@@ -1,8 +1,8 @@
 import base64
 import hashlib
 import json
+import random
 import struct
-import time
 
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad
@@ -84,3 +84,12 @@ class EncryptHelper:
                 f'x3={a1};'
                 f'x4={ts};')
         return 'XYW_' + EncryptHelper.encrypt_payload(EncryptHelper.encrypt_text(text))
+
+    @staticmethod
+    def x_b3_traceid() -> str:
+        """
+        :return: 生成的Trace ID字符串
+        """
+        characters = "abcdef0123456789"
+        trace_id = ''.join(random.choice(characters) for _ in range(16))
+        return trace_id
