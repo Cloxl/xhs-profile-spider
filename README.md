@@ -10,9 +10,11 @@
 - [x] 通过 **HTTP请求** 抓取目标内容
 - [x] 自定义规则下载 **爆文**
 
+### 正在进行中 🚀
+- [ ] 代码结构优化，支持并发与API调用
+
 ### 未来计划 📅
 
-- [ ] 代码结构优化，支持并发与API调用
 - [ ] 批量生成爆文
 - [ ] 增加简洁的Web中控界面
 - [ ] 增加小号池，实现批量抓取和发布
@@ -21,18 +23,18 @@
 <details>
     <summary  style="font-size: 20px; font-weight: bold;">如果你只需要纯算xs</summary>
 
-1. 下载 [EncryptHelper.py](https://raw.githubusercontent.com/Cloxl/xhs-profile-spider/refs/heads/master/EncryptHelper.py)
+1. 下载 [xs_encrypt.py](https://github.com/Cloxl/xhs-profile-spider/blob/master/encrypt/xs_encrypt.py)
 2. 导入 `EncryptHelper` 类，并调用其方法计算 `xs`  
 
 ```python  
-from EncryptHelper import EncryptHelper 
+from xs_encrypt import XsEncrypt 
 
-EncryptHelper.encrypt_xs(url: str, a1: str, ts: str)
+XsEncrypt.encrypt_xs(url: str, a1: str, ts: str)
 ```  
 
 - `url`: url去掉host后的字符串，例如：`/api/sns/web/v1/user_posted?num=?&cursor=?&user_id=?&image_formats=?`
 - `a1`: Cookies中的a1
-- `ts`: 毫秒时间戳(13位数字)
+- `ts`: 毫秒时间戳(13位数字)  
 具体请查看 [#4](https://github.com/Cloxl/xhs-profile-spider/issues/4) 自行扩展
 </details>
 
@@ -80,17 +82,13 @@ python test.py
 
 ## 常见问题（FAQ） 💬
 
-### 1. 为什么没有使用并发？ 🕒
-
-目前并发需求不大，后续可能会加入并发优化。
-
-### 2. 为什么代码质量不高？ 🤷‍♂️
+### 1. 为什么代码质量不高？ 🤷‍♂️
 
 目前的代码已足够满足个人需求，未来会考虑优化。
 
-### 3. 可以爬取个人主页以外的数据吗？ 🔍
+### 2. 可以爬取个人主页以外的数据吗？ 🔍
 
-可以，通过修改参数 `c` 和 `i` 值，实现更多数据的抓取。
+具体请查看 [#4](https://github.com/Cloxl/xhs-profile-spider/issues/4) 自行扩展
 
 ---
 ## 开源协议 📝
