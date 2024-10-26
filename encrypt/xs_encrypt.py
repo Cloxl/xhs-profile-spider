@@ -1,14 +1,13 @@
 import base64
 import hashlib
 import json
-import random
 import struct
 
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad
 
 
-class EncryptHelper:
+class XsEncrypt:
     words = [1735160886, 1748382068, 1631021929, 1936684855]
     key_bytes = b''.join(struct.pack('>I', word) for word in words)
     iv = b'4hrivgw5s342f9b2'
@@ -34,7 +33,7 @@ class EncryptHelper:
         """
         text_encoded = base64.b64encode(text.encode())
 
-        cipher = AES.new(EncryptHelper.key_bytes, AES.MODE_CBC, EncryptHelper.iv)
+        cipher = AES.new(XsEncrypt.key_bytes, AES.MODE_CBC, XsEncrypt.iv)
         ciphertext = cipher.encrypt(pad(text_encoded, AES.block_size))
         ciphertext_base64 = base64.b64encode(ciphertext).decode()
 
@@ -65,7 +64,7 @@ class EncryptHelper:
             "signType": "x2",
             "appID": "xhs-pc-web",
             "signVersion": "1",
-            "payload": EncryptHelper.base64_to_hex(payload)
+            "payload": XsEncrypt.base64_to_hex(payload)
         }
         return base64.b64encode(json.dumps(obj, separators=(',', ':')).encode()).decode()
 
@@ -79,17 +78,8 @@ class EncryptHelper:
         :param ts: 时间戳
         :return: 最终的加密签名字符串，前缀为“XYW_”
         """
-        text = (f'x1={EncryptHelper.get_md5(url)};'
+        text = (f'x1={XsEncrypt.get_md5(url)};'
                 f'x2=0|0|0|1|0|0|1|0|0|0|1|0|0|0|0|1|0|0|0;'
                 f'x3={a1};'
                 f'x4={ts};')
-        return 'XYW_' + EncryptHelper.encrypt_payload(EncryptHelper.encrypt_text(text))
-
-    @staticmethod
-    def x_b3_traceid() -> str:
-        """
-        :return: 生成的Trace ID字符串
-        """
-        characters = "abcdef0123456789"
-        trace_id = ''.join(random.choice(characters) for _ in range(16))
-        return trace_id
+        return 'XYW_' + XsEncrypt.encrypt_payload(XsEncrypt.encrypt_text(text))

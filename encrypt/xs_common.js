@@ -35,14 +35,9 @@ localStorage = {
 }
 encrypt_lookup = ["Z","m","s","e","r","b","B","o","H","Q","t","N","P","+","w","O","c","z","a","/","L","p","n","g","G","8","y","J","q","4","2","K","W","Y","j","0","D","S","f","d","i","k","x","3","V","T","1","6","I","l","U","A","F","M","9","7","h","E","C","v","u","R","X","5"]
 var r = ["aNnru","HuPPA","fuWik","0XTdDgM","YeksC","stringi","TWRRC","QodQz","oEJOH","ZTzUA","grmRY","rotl","WeJku","166608rPheNY","asBytes","nsRVs","TqqUf","toStrin","znhDm","rable","QvcwX","kAztI","kJbJF","nxLqG","functio","[object","vMgSY","u5wPHsO","charCod","|1|8|2|","THbLr","wxFrF","JOGcc","kieAy","kLHfg","_blocks","LtJdC","lpzNX","Illegal","zrCYZ","exports","QLCpu","oAuNK","0DSfdik","fMcPH","aQDqP","cdefghi","456789+","luphr","eAt","|4|7|9|","hECvuRX","GBbjK","_ff","EtoLj","RkUqN","XiASu","yRnhISG","DaKOp","cEthh","lDyWO","mYFfI","747000bpoxxx","uPINO","hasOwnP","OvSbZ","utf8","NSbRM","678834DtOObi","WiEUW","oHQtNP+","jxQfH","TrFCp","PeUOX","RhBYA","VVqhr","Aqnje","5|2|6","XvsAD","LISkf","UpJqT","KpdHM","EhmqT","QVfWN","constru","alert","ymSZq","Bvk6/7=","Hex","indexOf","4|0","OyLZz","EjhiU","oUlNk","iamspam","lePWA","replace","RlUQG","nt ","endian","isBuffe","tvTuG","length","oBytes","oUtLs","KIBVg","EfOwb","dyihR","QvByC","lVsog","HWloQ","ukdmU","charAt","aiPCy"," argume","nSvaa","vpnsk","0|1|8|3","xyz0123","oZrdv","|1|4","vCMhQ","dTDnB","HIJKLMN","stringT","undefin","2983832yCfWmB","MVMuH","rCode","a2r1ZQo","pFhMH","VzRME","LbIVv","vdWST","SCUrw","LpfE8xz","_gg","pUeCm","IkSKP","XMnZK","isipE","UuTzz","substr","wBwKE","VWADf","iRRsj","cwtZh","bin","QDDcY","KPDsF","ctor","dZDTV","enumera","_isBuff","RuOzo","CaLuR","dqkPn","oKmZD","POmcO","rZygc","KCdCY","UVUok","dHVwa","get","DAxHG","pBFAI","IXUYL","jgCKA","bytesTo","OJbNp","fromCha","|2|6|7|","string","binary","q42KWYj","YadeM","WpMRH","roperty","PnfZL","random","sxJcO","aILdC","ABCDEFG","split","jklmnop","wrjdQ","RChcL","Korlo","lUAFM97","1|5|0|3","rLPoA","fsfWX","LZldE","dXPDy","configu","fHaED","OjOSM","defineP","PKMEb","NUDjq","RoYii","bZadJ","pow","ugRAu","QtAXc","ize","ZmserbB"," Array]","tiWCE","ApyeS","YjOdD","default","MbCqK","dWDRM","eqtAt","isNoh","_ii","mQftZ","wordsTo","yOCos","YazxT","dYrlI","rbvpK","Fxjya","call","_digest","pngG8yJ","zuxrg","xycJU","KGBPZ","dwkbK","nmEYA","AIwtp","HoRIs","eiUxV","isArray","XjFqq","YLkkY","dIINx","avjRj","XiUBb","IFlYW","wOcza/L","1108521TgMXYJ","XRaRa","UfZiV","test","GIlRJ","YxRuc","mDArr","5|4|0|1","5303600OvAwBy","tQrlu","PJMqq","oRPrz","pxmgV","eiErr","Bytes","xBGAU","PkOgS","qrstuvw","nBYdB","uYjCR","prototy","rAlBp","atLE","DJmdg","FQqah","Dxojc","oTyhe","eMwyL","AeCLB","IEDmq","ble","dAKMZ","faved","xxfUq","DiTqT","GBVeZ","KozBG","VCkef","YYoSR","rhOyV","sxbAo","aTuAi","xajtV","gQbxB","UmpWx","ddswA","kxwhd","QMvnM","KabsY","HoqDm","fXpGx","MxRSL","Twima","zAnEW","rqcQI","join","userAge","ZrfCV","gmYiF","aToRy","sfXtM","A4NjFqY","kQdeo","GyHQU","TUMma","floor","String","cVte9UJ","lIGVb","ule","vQcMj","HFfzT","bjZLJ","getTime","khMzy","AIvJY","ezvVk","VWXYZab","HioSg","14047796pmFjxA","YQHEl","AAHOg","MVfpC","rpOJZ","zDsSM"," Object","AKqWJ","TmtvD","x3VT16I","|7|6|3|","6|5|3|7","mqwTT","oRfEy","ZUqtM","AMpFN","lZzjg","uanbD","encodin","ADzBt","GAAFA","vXYvp","RDgnu","UZGLM","DYGiC","OTDmr","oLnZX","UOvBB","navigat","moTVi","__esMod","KblCWi+","nUIaV","AbWfM","push","asStrin","OPQRSTU","syPaZ","kOtZv","WBzOj","QtAKi","dQJvJ","twMTN","RpTrd","readFlo","_hh","iliLS","nfWyB","YQOUV","Words","zKqdy","3|5|2|0","slice","cUEKO","kdtls","fnCys","YqUgj","TukVg","wYcVv","VbiwY","pfBOc","ZSFiZ","UoRga","eUqJS","jFuNn","size","oZFcs","YOtxY","csCcj","LpmsP"]
-function a0_0x2092(t, e) {
-    return (a0_0x2092 = function(t, e) {
-            return r[t -= 194]
-        }
-    )(t, e)
-}
+
 function a0_0x2923d6(t, e) {
-    return a0_0x2092(e - 299, t)
+    return r[e - 493];
 }
 function encrypt_encodeChunk(t, e, r) {
     var n, o = 50, i = 229, a = 178, u = 3, s = 89, c = 161, l = 28, f = 97, p = 28, h = 46, d = 142, v = 19, g = 37, m = 0, y = {
@@ -467,10 +462,4 @@ function get_x_s_common(xs, xt, sign_count, h, a1) {
         x10: sign_count
     }
     return encrypt_b64Encode(encrypt_encodeUtf8(JSON.stringify(v)))
-}
-
-function x_b3_traceid() {
-    for (var t = "", e = 0; e < 16; e++)
-        t += "abcdef0123456789".charAt(Math.floor(16 * Math.random()));
-    return t
 }
