@@ -7,4 +7,4 @@ beautifulsoup4~=4.12.3
 pillow~=10.4.0
 pycryptodome~=3.21.0
 aiofiles~=24.1.0
-aiohttp~=3.10.9
+aiohttp~=3.10.10
