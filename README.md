@@ -1,5 +1,5 @@
 <div align="center">
-<h1 align="center">小红书秀 📄</h1>
+<h1 align="center">小红秀 📄</h1>
 <br>
 完全开源免费的小红书 <b>数据展示中控!</b>
 <br>
