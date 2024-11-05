@@ -36,6 +36,21 @@ XsEncrypt.encrypt_xs(url: str, a1: str, ts: str)
 - `a1`: Cookies中的a1
 - `ts`: 毫秒时间戳(13位数字)  
 具体请查看 [#4](https://github.com/Cloxl/xhs-profile-spider/issues/4) 自行扩展
+
+注意:   
+请求旋转时验证码时, 加密算法与纯算xs调用方法不同, 应使用`encrypt_sign`方法  
+url传入: xt + 'test' + '/api/redcaptcha/v2/captcha/register' + payload  
+```python  
+xt = str(int(time.time() * 1000))
+payload = "{\"secretId\":\"000\",\"verifyType\":\"102\",\"verifyUuid\":\"\",\"verifyBiz\":\"461\",\"sourceSite\":\"\",\"captchaVersion\":\"1.3.0\"}"
+url = xt + 'test' + '/api/redcaptcha/v2/captcha/register' + payload
+
+XsEncrypt.encrypt_sign(url: str = url)
+```
+在纯算纯协议过验证码时 需传递platform参数  
+```python
+XsEncrypt.encrypt_xs(url: str, a1: str, ts: str, platform: str = 'login')
+```
 </details>
 
 ## ⚠️本项目目前不可直接跑通 在开发中⚠️
@@ -46,7 +61,7 @@ XsEncrypt.encrypt_xs(url: str, a1: str, ts: str)
 请确保使用 `python >= 3.11`。
 
 ```bash
-git clone https://github.com/Cloxl/xhs-profile-spider.git
+git clone https://github.com/Cloxl/xhshow.git
 pip install -r requirements.txt
 ```
 ## 运行指令 🚀
@@ -66,22 +81,11 @@ python xhs.py
 ## 常见问题（FAQ） 💬
 ### 1. 可以爬取个人主页以外的数据吗？ 🔍
 
-具体请查看 [#4](https://github.com/Cloxl/xhs-profile-spider/issues/4) 自行扩展  
+具体请查看 [#4](https://github.com/Cloxl/xhshow/issues/4) 自行扩展  
 
 ---
-## 赞助
-
-<div align="center">
-    <a href="https://afdian.com/a/Cloxl/plan" target="_blank" style="text-decoration: none;">
-        <div style="width: 200px; height: 200px; border-radius: 50%; background-color: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #333;">
-            反正也没人赞助<br>画个圆吧<br><br>如果真的要赞助<br>点击这个圆即可跳转
-        </div>
-    </a>
-</div>
-
-
 ## 开源协议 📝
-开源协议为 [MIT](https://github.com/Cloxl/xhs-profile-spider/blob/master/LICENSE)  
+开源协议为 [MIT](https://github.com/Cloxl/xhshow/blob/master/LICENSE)  
 如果你遵循了以下条件:
 - 保留 Copyright (c) 2024 Cloxl
 
@@ -90,3 +94,9 @@ python xhs.py
 - 修改
 - 分发
 - 商用
+- 
+## 赞助
+如果觉得项目对你有帮助, 可以赞助一下  
+非常感谢你的支持 我会继续努力完善项目  
+![](https://github.com/Cloxl/xhshow/blob/master/docs/sponsor.jpg)
+[如果图片加载不出来请点我](https://vip.123pan.cn/1840147130/cdn/%E8%B5%9E%E8%B5%8FCloxl.jpg)
