@@ -1,5 +1,6 @@
 import base64
 import hashlib
+import itertools
 import json
 import struct
 
@@ -69,7 +70,7 @@ class XsEncrypt:
             "signType": "x2",
             "appID": platform,
             "signVersion": "1",
-            "payload": XsEncrypt.base64_to_hex(payload)
+            "payload": await XsEncrypt.base64_to_hex(payload)
         }
         return base64.b64encode(json.dumps(obj, separators=(',', ':')).encode()).decode()
 
@@ -85,7 +86,7 @@ class XsEncrypt:
         :param platform: 登录平台 默认为xhs-pc-web
         :return: 最终的加密签名字符串，前缀为“XYW_”
         """
-        text = (f'x1={XsEncrypt.encrypt_md5(url)};'
+        text = (f'x1={await XsEncrypt.encrypt_md5(url)};'
                 f'x2=0|0|0|1|0|0|1|0|0|0|1|0|0|0|0|1|0|0|0;'
                 f'x3={a1};'
                 f'x4={ts};')
@@ -100,21 +101,15 @@ class XsEncrypt:
         :param url: 去掉host name的url
         :return: 加密后的字符串
         """
-        md5_ascii = [ord(char) for char in await XsEncrypt.encrypt_md5(url)]
         result = ''
-        pointer = 0
+        md5_ascii = [ord(char) for char in await XsEncrypt.encrypt_md5(url)]
+        chunks = itertools.zip_longest(md5_ascii[::3], md5_ascii[1::3], md5_ascii[2::3], fillvalue=0)
 
-        for _ in range(11):
-            u = md5_ascii[pointer] if pointer < len(md5_ascii) else 0
-            c = md5_ascii[pointer + 1] if pointer + 1 < len(md5_ascii) else 0
-            s = md5_ascii[pointer + 2] if pointer + 2 < len(md5_ascii) else 0
-            pointer += 3
-
+        for u, c, s in chunks:
             l = u >> 2
             f = ((u & 3) << 4) | (c >> 4)
             p = ((c & 15) << 2) | (s >> 6) if c else 64
             d = s & 63 if s else 64
 
             result += xn[l] + xn[f] + (xn[p] if p < 64 else xn64) + (xn[d] if d < 64 else xn64)
-
         return result
