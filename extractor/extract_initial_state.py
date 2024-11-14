@@ -1,6 +1,8 @@
+import asyncio
 import json
 import re
 from typing import Any
+
 from bs4 import BeautifulSoup
 from loguru import logger
 

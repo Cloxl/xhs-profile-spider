@@ -94,7 +94,11 @@ class MiscEncrypt(CookieFieldEncrypt):
         return trace_id
 
     @staticmethod
-    async def get_search_id():
+    async def search_id():
         e = int(time.time() * 1000) << 64
         t = int(random.uniform(0, 2147483646))
         return await CustomFieldDecrypt.base36encode((e + t))
+
+    @staticmethod
+    async def x_xray_traceid(x_b3: str) -> str:
+        return hashlib.md5(x_b3.encode('utf-8')).hexdigest()

@@ -90,7 +90,7 @@ class XscEncrypt:
             o = to_js_int(ie[(o & 255) ^ ord(char)] ^ unsigned_right_shift(o, 8))
         return to_js_int(~o ^ 3988292384)
 
-    async def get_xsc(self, xs, xt, platform, a1, x1, x4, b1) -> str:
+    async def encrypt_xsc(self, xs: str, xt: str, platform: str, a1: str, x1: str, x4: str) -> str:
         """
         生成xsc
         Args:
