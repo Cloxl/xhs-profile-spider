@@ -36,6 +36,14 @@ lookup = [
 xn = 'A4NjFqYu5wPHsO0XTdDgMa2r1ZQocVte9UJBvk6/7=yRnhISGKblCWi+LpfE8xzm3'
 xn64 = xn[64]
 
+replacements = {
+    'undefined': 'null',
+    "'": '"',
+    'True': 'true',
+    'False': 'false',
+    'None': 'null'
+}
+
 bg_nums = {
     "bg_s194524363": 1,
     "bg_s193244778": 2,

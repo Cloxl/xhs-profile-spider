@@ -1,8 +1,8 @@
-from typing import Dict, List, Optional
-from datetime import datetime
-import json
 import asyncio
+import json
+from datetime import datetime
 from enum import Enum
+from typing import Dict, List, Optional
 
 
 class UserApi:
@@ -90,12 +90,12 @@ class UserApi:
         """获取用户发布的笔记列表
         Args:
             user_id: 用户ID
-            cursor: 分页游标,默认空字符串
+            cursor: 分页游标, 默认空字符串
         Returns:
             Dict: {
-                "cursor": str,
+                "cursor”: str,
                 "has_more": bool,
-                "notes": List[Dict]
+                “notes”: List[Dict]
             }
         """
         uri = "/api/sns/web/v1/user_posted"

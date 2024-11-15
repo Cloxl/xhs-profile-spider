@@ -1,6 +1,7 @@
 import os
-from typing import Tuple, List, Dict, Optional
 from enum import Enum
+from typing import Dict, List, Optional, Tuple
+
 from lxml import etree
 
 

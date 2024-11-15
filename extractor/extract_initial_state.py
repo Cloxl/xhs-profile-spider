@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 from loguru import logger
 
 
-async def extract_initial_state(html_content: str, replacements: dict) -> Any | None:
+async def extract_initial_state(html_content: str, replacements: dict) -> dict | None:
     """
     从HTML中的<script>标签中提取window.__INITIAL_STATE__ 解析并保存为JSON格式
 

@@ -1,19 +1,16 @@
 import json
 import random
 import urllib.parse
-from config import lookup, ie
+
+from config import ie, lookup
 
 
 class XscEncrypt:
     """
     提供字符串加密与Base64编码的功能
     """
-
-    def __init__(self):
-        """初始化Encoder实例"""
-        self.lookup = lookup
-
-    async def encrypt_encode_utf8(self, text) -> list:
+    @staticmethod
+    async def encrypt_encode_utf8(text) -> list:
         """
         对输入的文本进行URL编码 转换百分号编码为十进制ASCII值
         Args:
@@ -25,7 +22,8 @@ class XscEncrypt:
         return [int(encoded[i + 1:i + 3], 16) if encoded[i] == '%' else ord(encoded[i])
                 for i in range(len(encoded)) if encoded[i] != '%' or i % 3 == 0]
 
-    async def triplet_to_base64(self, e) -> str:
+    @staticmethod
+    async def triplet_to_base64(e) -> str:
         """
         将24位整数分成4个6位部分 转换为Base64字符串
         Args:
@@ -33,10 +31,11 @@ class XscEncrypt:
         Returns:
             Base64字符串
         """
-        return (self.lookup[(e >> 18) & 63] + self.lookup[(e >> 12) & 63] +
-                self.lookup[(e >> 6) & 63] + self.lookup[e & 63])
+        return (lookup[(e >> 18) & 63] + lookup[(e >> 12) & 63] +
+                lookup[(e >> 6) & 63] + lookup[e & 63])
 
-    async def encode_chunk(self, e, t, r) -> str:
+    @staticmethod
+    async def encode_chunk(e, t, r) -> str:
         """
         将编码后的整数列表分成3字节一组转换为Base64
         Args:
@@ -46,10 +45,11 @@ class XscEncrypt:
         Returns:
             编码后的Base64字符串
         """
-        return ''.join(await self.triplet_to_base64((e[b] << 16) + (e[b + 1] << 8) + e[b + 2])
+        return ''.join(await XscEncrypt.triplet_to_base64((e[b] << 16) + (e[b + 1] << 8) + e[b + 2])
                        for b in range(t, r, 3))
 
-    async def b64_encode(self, e) -> str:
+    @staticmethod
+    async def b64_encode(e) -> str:
         """
         将整数列表编码为Base64格式
         Args:
@@ -60,17 +60,18 @@ class XscEncrypt:
         P = len(e)
         W = P % 3
         Z = P - W
-        result = [await self.encode_chunk(e, i, min(i + 16383, Z)) for i in range(0, Z, 16383)]
+        result = [await XscEncrypt.encode_chunk(e, i, min(i + 16383, Z)) for i in range(0, Z, 16383)]
 
         if W == 1:
             F = e[-1]
-            result.append(self.lookup[F >> 2] + self.lookup[(F << 4) & 63] + "==")
+            result.append(lookup[F >> 2] + lookup[(F << 4) & 63] + "==")
         elif W == 2:
             F = (e[-2] << 8) + e[-1]
-            result.append(self.lookup[F >> 10] + self.lookup[(F >> 4) & 63] + self.lookup[(F << 2) & 63] + "=")
+            result.append(lookup[F >> 10] + lookup[(F >> 4) & 63] + lookup[(F << 2) & 63] + "=")
         return "".join(result)
 
-    async def mrc(self, e) -> int:
+    @staticmethod
+    async def mrc(e) -> int:
         """
         使用自定义CRC算法生成校验值
         Args:
@@ -89,8 +90,9 @@ class XscEncrypt:
         for char in e:
             o = to_js_int(ie[(o & 255) ^ ord(char)] ^ unsigned_right_shift(o, 8))
         return to_js_int(~o ^ 3988292384)
-
-    async def encrypt_xsc(self, xs: str, xt: str, platform: str, a1: str, x1: str, x4: str) -> str:
+    
+    @staticmethod
+    async def encrypt_xsc(xs: str, xt: str, platform: str, a1: str, x1: str, x4: str) -> str:
         """
         生成xsc
         Args:
@@ -120,5 +122,5 @@ class XscEncrypt:
             "x10": random.randint(10, 29)
         }, separators=(",", ":"), ensure_ascii=False)
 
-        encrypted_data = await self.encrypt_encode_utf8(str(await self.mrc(st)))
-        return await self.b64_encode(encrypted_data)
+        encrypted_data = await XscEncrypt.encrypt_encode_utf8(str(await XscEncrypt.mrc(st)))
+        return await XscEncrypt.b64_encode(encrypted_data)

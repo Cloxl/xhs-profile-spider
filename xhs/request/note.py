@@ -1,8 +1,12 @@
-from enum import Enum
-from typing import Optional, List, Dict, Any
 import json
 import os
 from datetime import datetime
+from enum import Enum
+from typing import Any, Dict, List, Optional
+
+from config import replacements
+from extractor import extract_initial_state
+from xhs.request.AsyncRequestFramework import AsyncRequestFramework
 
 
 class NoteType(Enum):
@@ -11,8 +15,9 @@ class NoteType(Enum):
 
 
 class Notes:
-    def __init__(self, client):
-        self.client = client
+    def __init__(self, arf: AsyncRequestFramework):
+        self.arf = arf
+        self._host = "https://edith.xiaohongshu.com"
 
     async def get_note_detail(self, note_id: str, xsec_token: str = "") -> Dict:
         """获取笔记详情
@@ -24,16 +29,23 @@ class Notes:
         Returns:
             笔记详情信息
         """
-        data = {
-            "source_note_id": note_id,
-            "image_formats": ["jpg", "webp", "avif"],
-            "extra": {"need_body_topic": "1"},
+        params = {
             "xsec_source": "pc_feed",
             "xsec_token": xsec_token
         }
-        uri = "/api/sns/web/v1/feed"
-        res = await self.client.post(uri, data)
-        return res["items"][0]["note_card"]
+        url = f"https://www.xiaohongshu.com/explore/{note_id}"
+        res = await self.arf.send_http_request(
+            url=url,
+            method="GET",
+            params=params,
+            html_mode=True,
+            back_fun=True
+        )
+
+        content = (await extract_initial_state(await res.acontent(), replacements)
+                   )["note"]["noteDetailMap"][f"{note_id}"]
+
+        return content
 
     async def create_note(self,
                           title: str,
@@ -99,33 +111,71 @@ class Notes:
             "Referer": "https://creator.xiaohongshu.com/"
         }
 
-        return await self.client.post(uri, data, headers=headers)
+        return await self.arf.post(uri, data, headers=headers)
 
     async def like_note(self, note_id: str) -> Dict:
         """点赞笔记"""
         uri = "/api/sns/web/v1/note/like"
         data = {"note_oid": note_id}
-        return await self.client.post(uri, data)
+        return await self.arf.post(uri, data)
 
     async def collect_note(self, note_id: str) -> Dict:
         """收藏笔记"""
         uri = "/api/sns/web/v1/note/collect"
         data = {"note_id": note_id}
-        return await self.client.post(uri, data)
+        return await self.arf.post(uri, data)
 
-    async def get_note_comments(self, note_id: str, cursor: str = "") -> Dict:
+    async def get_note_comments(self, note_id: str, cursor: str = "", xsec_token: str = "") -> Dict:
         """获取笔记评论
 
         Args:
             note_id: 笔记ID
             cursor: 分页游标
+            xsec_token: 笔记的xsec_token
         """
         uri = "/api/sns/web/v2/comment/page"
-        params = {"note_id": note_id, "cursor": cursor}
-        return await self.client.get(uri, params)
+        params = {
+            "note_id": note_id,
+            "cursor": cursor,
+            "top_comment_id": "",
+            "image_formats": "jpg,webp,avif",
+            "xsec_token": xsec_token
+        }
+
+        return await self.arf.send_http_request(
+            url=f"{self._host}{uri}",
+            method="GET",
+            params=params
+        )
+
+    async def get_sub_comments(self, note_id: str, root_comment_id: str, cursor: str = "", xsec_token: str = "") -> Dict:
+        """获取笔记子评论
+
+        Args:
+            note_id: 笔记ID
+            root_comment_id: 根评论ID
+            cursor: 分页游标
+            xsec_token: 笔记的xsec_token
+        """
+        uri = "/api/sns/web/v2/comment/page"
+        params = {
+            "note_id": note_id,
+            "root_comment_id": root_comment_id,
+            "num": "10",
+            "cursor": cursor,
+            "image_formats": "jpg,webp,avif",
+            "top_comment_id": "",
+            "xsec_token": xsec_token
+        }
+        return await self.arf.send_http_request(
+            url=f"{self._host}{uri}",
+            method="GET",
+            params=params
+        )
 
     async def search_notes(self,
                            keyword: str,
+                           search_id: str,
                            page: int = 1,
                            page_size: int = 20,
                            sort: str = "general",
@@ -134,6 +184,7 @@ class Notes:
 
         Args:
             keyword: 搜索关键词
+            search_id: 搜索ID
             page: 页码
             page_size: 每页大小
             sort: 排序方式
@@ -145,9 +196,19 @@ class Notes:
             "page": page,
             "page_size": page_size,
             "sort": sort,
-            "note_type": note_type
+            "note_type": note_type,
+            "search_id": search_id,
+            "image_formats": [
+                "jpg",
+                "webp",
+                "avif"
+            ]
         }
-        return await self.client.post(uri, data)
+        return await self.arf.send_http_request(
+            url=f"{self._host}{uri}",
+            method="POST",
+            json=data,
+        )
 
     async def get_note_statistics(self,
                                   page: int = 1,
@@ -178,4 +239,4 @@ class Notes:
         headers = {
             "Referer": "https://creator.xiaohongshu.com/creator/notes?source=official"
         }
-        return await self.client.get(uri, params, headers=headers, is_creator=True)
+        return await self.arf.get(uri, params, headers=headers, is_creator=True)

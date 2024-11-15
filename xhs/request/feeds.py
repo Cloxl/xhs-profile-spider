@@ -1,7 +1,7 @@
 # feeds.py
 
 from enum import Enum
-from typing import List, Dict, Optional
+from typing import Dict, List, Optional
 
 
 class FeedType(Enum):

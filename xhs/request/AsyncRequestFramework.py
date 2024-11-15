@@ -2,11 +2,12 @@ import asyncio
 import json
 import time
 from collections.abc import Mapping
+from urllib.parse import urlencode
 
 from curl_cffi.requests import AsyncSession, Response
 from loguru import logger
 
-from encrypt import XsEncrypt, XscEncrypt, MiscEncrypt
+from encrypt import MiscEncrypt, XscEncrypt, XsEncrypt
 
 
 class AsyncRequestFramework:
@@ -37,18 +38,29 @@ class AsyncRequestFramework:
 
     async def __pre_headers(
         self,
-        url: str,
+        uri: str,
         xsc_schemas,
         a1: str,
         cookie: dict,
-        is_creator: bool = False,
-        is_search: bool = False,
+        method: str,
+        params: dict,
+        data: dict,
     ):
         session = await self.init_session()
         session.cookies.update(cookie)
 
         xt = str(int(time.time() * 1000))
-        xs = await XsEncrypt.encrypt_xs(url=url, a1=a1, ts=xt)
+
+        match method:
+            case 'GET':
+                xs = await XsEncrypt.encrypt_xs(url=f"{uri}?{urlencode(params)}",
+                                                a1=a1, ts=xt)
+            case 'POST':
+                xs = await XsEncrypt.encrypt_xs(url=f"{uri}{json.dumps(data,separators=(',', ':'),ensure_ascii=False)}",
+                                                a1=a1, ts=xt)
+            case _:
+                xs = ""
+
         xsc = await XscEncrypt.encrypt_xsc(xs=xs, xt=xt, platform=xsc_schemas.platform, a1=a1,
                                            x1=xsc_schemas.x1, x4=xsc_schemas.x4)
 
@@ -56,25 +68,25 @@ class AsyncRequestFramework:
         session.headers.update({"x-t": xt})
         session.headers.update({"x-s-common": xsc})
 
-        if not is_creator:
-            x_b3 = await MiscEncrypt.x_b3_traceid()
-            session.headers.update({
-                "x-b3-traceid": x_b3,
-                "x-xray-traceid": await MiscEncrypt.x_xray_traceid(x_b3),
-            })
+        x_b3 = await MiscEncrypt.x_b3_traceid()
 
-        if is_search:
-            session.headers.update({"x-search-id": await MiscEncrypt.search_id()})
+        session.headers.update({
+            "x-b3-traceid": x_b3,
+            "x-xray-traceid": await MiscEncrypt.x_xray_traceid(x_b3),
+        })
 
         return session
 
-    async def send_http_request(self, url, session, method='GET', params=None, data=None, headers=None, timeout=5, proxy=None,
+    async def send_http_request(self, url, uri: str, xsc_schemas, html_mode: bool = False, method='GET', params=None, data=None, headers=None, timeout=5, proxy=None,
                                 cookie=None, back_fun=False,
                                 max_retries=3, retry_delay=0.1, **kwargs):
         """发送 HTTP 请求
 
         Args:
             url (str): 请求的 URL
+            uri (str): 请求的 URI
+            xsc_schemas (cls): 可选 xsc的版本信息参数
+            html_mode (bool): 是否为首次访问html 默认为 False
             method (str, optional): HTTP 请求方法 默认为 'GET'
             params (dict, optional): URL 查询参数
             data (dict or str, optional): 发送的请求体数据
@@ -95,6 +107,19 @@ class AsyncRequestFramework:
             headers = {}
         if proxy == {}:
             proxy = None
+
+        if html_mode:
+            session = AsyncSession()
+        else:
+            session = await self.__pre_headers(
+                uri=uri,
+                xsc_schemas=xsc_schemas,
+                a1=cookie["a1"],
+                cookie=cookie,
+                method=method,
+                params=params,
+                data=data
+            )
 
         method = method.upper()
         kwargs['stream'] = True
