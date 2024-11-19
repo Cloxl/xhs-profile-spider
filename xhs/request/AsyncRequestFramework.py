@@ -53,7 +53,7 @@ class AsyncRequestFramework:
 
         match method:
             case 'GET':
-                xs = await XsEncrypt.encrypt_xs(url=f"{uri}?{urlencode(params)}",
+                xs = await XsEncrypt.encrypt_xs(url=f"{uri}?{json.dumps(params, separators=(',', ':'), ensure_ascii=False)}",
                                                 a1=a1, ts=xt)
             case 'POST':
                 xs = await XsEncrypt.encrypt_xs(url=f"{uri}{json.dumps(data,separators=(',', ':'),ensure_ascii=False)}",
@@ -77,8 +77,8 @@ class AsyncRequestFramework:
 
         return session
 
-    async def send_http_request(self, url, uri: str, xsc_schemas, html_mode: bool = False, method='GET', params=None, data=None, headers=None, timeout=5, proxy=None,
-                                cookie=None, back_fun=False,
+    async def send_http_request(self, url, xsc_schemas=None, uri: str = "", html_mode: bool = False, method='GET',
+                                params=None, data=None, headers=None, timeout=5, proxy=None, cookie=None, back_fun=False,
                                 max_retries=3, retry_delay=0.1, **kwargs):
         """发送 HTTP 请求
 
