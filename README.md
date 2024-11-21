@@ -86,6 +86,9 @@ python xhs.py
 
 具体请查看 [#4](https://github.com/Cloxl/xhshow/issues/4) 自行扩展  
 
+### 2. 如何更新验证码图片?
+code文件夹下有更新验证码的示例  
+详细信息查看 [#15](https://github.com/Cloxl/xhshow/issues/15#issuecomment-2484476985)
 ---
 ## 开源协议 📝
 开源协议为 [MIT](https://github.com/Cloxl/xhshow/blob/master/LICENSE)  
