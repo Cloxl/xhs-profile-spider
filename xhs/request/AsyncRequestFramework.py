@@ -77,7 +77,7 @@ class AsyncRequestFramework:
 
         return session
 
-    async def send_http_request(self, url, xsc_schemas=None, uri: str = "", html_mode: bool = False, method='GET',
+    async def send_http_request(self, url, method='GET', xsc_schemas=None, uri: str = "", auto_sign: bool = False,
                                 params=None, data=None, headers=None, timeout=5, proxy=None, cookie=None, back_fun=False,
                                 max_retries=3, retry_delay=0.1, **kwargs):
         """发送 HTTP 请求
@@ -86,7 +86,7 @@ class AsyncRequestFramework:
             url (str): 请求的 URL
             uri (str): 请求的 URI
             xsc_schemas (cls): 可选 xsc的版本信息参数
-            html_mode (bool): 是否为首次访问html 默认为 False
+            auto_sign (bool): 是否自动前面xs 默认为 False
             method (str, optional): HTTP 请求方法 默认为 'GET'
             params (dict, optional): URL 查询参数
             data (dict or str, optional): 发送的请求体数据
@@ -108,9 +108,7 @@ class AsyncRequestFramework:
         if proxy == {}:
             proxy = None
 
-        if html_mode:
-            session = AsyncSession()
-        else:
+        if auto_sign:
             session = await self.__pre_headers(
                 uri=uri,
                 xsc_schemas=xsc_schemas,
@@ -120,6 +118,8 @@ class AsyncRequestFramework:
                 params=params,
                 data=data
             )
+        else:
+            session = AsyncSession()
 
         method = method.upper()
         kwargs['stream'] = True

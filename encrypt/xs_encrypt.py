@@ -24,7 +24,7 @@ class XsEncrypt:
         :param url: API的url
         :return: MD5摘要
         """
-        md5_hash = hashlib.md5(('url=' + url).encode('utf-8')).hexdigest()
+        md5_hash = hashlib.md5(url.encode('utf-8')).hexdigest()
         return md5_hash
 
     @staticmethod
@@ -94,13 +94,16 @@ class XsEncrypt:
 
     @staticmethod
     @typechecked
-    async def encrypt_sign(url: str) -> str:
+    async def encrypt_sign(ts: str, payload: dict) -> str:
         """
         小红书验证码签名
 
-        :param url: 去掉host name的url
+        :param ts: xt
+        :param payload: 请求参数
         :return: 加密后的字符串
         """
+        url = f"{ts}test/api/redcaptcha/v2/captcha/register{json.dumps(payload, separators=(',', ':'), ensure_ascii=False)}"
+
         result = ''
         md5_ascii = [ord(char) for char in await XsEncrypt.encrypt_md5(url)]
         chunks = itertools.zip_longest(md5_ascii[::3], md5_ascii[1::3], md5_ascii[2::3], fillvalue=0)

@@ -1,12 +1,13 @@
 import base64
 import json
 import random
+from code import XhsDesKeys
 
 import cv2
 import numpy as np
 from curl_cffi.requests import AsyncSession
-from pyDes import PAD_PKCS5, ECB, des
-from code import XhsDesKeys
+from pyDes import ECB, PAD_PKCS5, des
+
 from config import bg_nums
 
 
@@ -14,14 +15,15 @@ class CaptchaSolver:
     def __init__(self):
         ...
 
-    async def decrypt_data(self, encoded_data: str) -> str:
+    async def decrypt_data(self, encoded_data: str, decode_key: str = XhsDesKeys.DECODE_CAPTCHA_INFO) -> str:
         """解密数据
         Args:
             encoded_data: 编码数据
+            decode_key: 解密密钥
         Return:
             解密后的数据作为字符串
         """
-        des_obj = des(XhsDesKeys.DECODE_CAPTCHA_INFO, ECB, padmode=PAD_PKCS5)
+        des_obj = des(decode_key, ECB, padmode=PAD_PKCS5)
         return des_obj.decrypt(base64.b64decode(encoded_data)).decode()
 
     async def encrypt_data(self, key: str, data: str) -> str:
