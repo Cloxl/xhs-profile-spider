@@ -12,9 +12,9 @@ from config import xn, xn64
 
 
 class XsEncrypt:
-    words = [1735160886, 1748382068, 1631021929, 1936684855]
+    words = [929260340, 1633971297, 895580464, 925905270]
     key_bytes = b''.join(struct.pack('>I', word) for word in words)
-    iv = b'4hrivgw5s342f9b2'
+    iv = b'4uzjr7mbsibcaldp'
 
     @staticmethod
     async def encrypt_md5(url: str) -> str:
@@ -66,7 +66,7 @@ class XsEncrypt:
         :return: 加密后并进行base64编码的字符串
         """
         obj = {
-            "signSvn": "55",
+            "signSvn": "56",
             "signType": "x2",
             "appID": platform,
             "signVersion": "1",
@@ -86,7 +86,7 @@ class XsEncrypt:
         :param platform: 登录平台 默认为xhs-pc-web
         :return: 最终的加密签名字符串，前缀为“XYW_”
         """
-        text = (f'x1={await XsEncrypt.encrypt_md5(url)};'
+        text = (f'x1={await XsEncrypt.encrypt_md5(url="url="+url)};'
                 f'x2=0|0|0|1|0|0|1|0|0|0|1|0|0|0|0|1|0|0|0;'
                 f'x3={a1};'
                 f'x4={ts};')
