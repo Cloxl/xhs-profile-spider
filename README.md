@@ -127,4 +127,4 @@ code文件夹下有更新验证码的示例
 <img src="https://github.com/Cloxl/xhshow/blob/master/docs/sponsor.jpg" width="300" height="300" alt="赞助">  
 [如果图片加载不出来请点我](https://vip.123pan.cn/1840147130/cdn/%E8%B5%9E%E8%B5%8FCloxl.jpg)
 
-如果你有任何问题 请联系我[邮箱](mailto:cloxl@mail.cloxl.com)
+如果你有任何问题 请联系我[邮箱](mailto:cloxl2017@outlook.at)
