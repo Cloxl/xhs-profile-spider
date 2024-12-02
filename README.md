@@ -69,7 +69,6 @@ XsEncrypt.encrypt_xs(url: str, a1: str, ts: str)
 
 #### 2. 旋转验证码
 请求旋转时验证码时, 加密算法与纯算xs调用方法不同, 应使用`encrypt_sign`方法  
-url传入: xt + 'test' + '/api/redcaptcha/v2/captcha/register' + payload  
 ```python  
 ts = str(int(time.time() * 1000))
 payload = {
@@ -81,7 +80,7 @@ payload = {
     "captchaVersion": "1.3.0"
 }
 
-XsEncrypt.encrypt_sign(ts: str = url, payload: dict = payload)
+XsEncrypt.encrypt_sign(ts: str = ts, payload: dict = payload)
 ```
 在纯算纯协议过验证码时 需传递platform参数  
 ```python
