@@ -45,8 +45,12 @@ class XscEncrypt:
         Returns:
             编码后的Base64字符串
         """
-        return ''.join(await XscEncrypt.triplet_to_base64((e[b] << 16) + (e[b + 1] << 8) + e[b + 2])
-                       for b in range(t, r, 3))
+        chunks = []
+        for b in range(t, r, 3):
+            if b + 2 < len(e):  # 确保有完整的三个字节
+                chunk = await XscEncrypt.triplet_to_base64((e[b] << 16) + (e[b + 1] << 8) + e[b + 2])
+                chunks.append(chunk)
+        return ''.join(chunks)
 
     @staticmethod
     async def b64_encode(e) -> str:
@@ -92,7 +96,7 @@ class XscEncrypt:
         return to_js_int(~o ^ 3988292384)
     
     @staticmethod
-    async def encrypt_xsc(xs: str, xt: str, platform: str, a1: str, x1: str, x4: str) -> str:
+    async def encrypt_xsc(xs: str, xt: str, platform: str, a1: str, x1: str, x4: str, b1: str):
         """
         生成xsc
         Args:
@@ -106,6 +110,7 @@ class XscEncrypt:
         Returns:
             xsc
         """
+        x9 = str(await XscEncrypt.mrc(xt+xs+b1))
         st = json.dumps({
             "s0": 5,
             "s1": "",
@@ -117,10 +122,24 @@ class XscEncrypt:
             "x5": a1,
             "x6": xt,
             "x7": xs,
-            "x8": "I38rH",
-            "x9": int,
-            "x10": random.randint(10, 29)
+            "x8": b1,
+            "x9": x9,
+            # "x10": random.randint(10, 29)
+            "x10": 24
         }, separators=(",", ":"), ensure_ascii=False)
+        return await XscEncrypt.encrypt_encode_utf8(st)
 
-        encrypted_data = await XscEncrypt.encrypt_encode_utf8(str(await XscEncrypt.mrc(st)))
-        return await XscEncrypt.b64_encode(encrypted_data)
+
+if __name__ == '__main__':
+    import asyncio
+
+    t = asyncio.run(XscEncrypt.encrypt_xsc(
+        xs="XYW_eyJzaWduU3ZuIjoiNTYiLCJzaWduVHlwZSI6IngyIiwiYXBwSWQiOiJ4aHMtcGMtd2ViIiwic2lnblZlcnNpb24iOiIxIiwicGF5bG9hZCI6ImMyZmU4Nzc4MmFiY2I2YTYzOTFhOTY0MjAyMGI3ZmFjODQ2YjUyMjZmNDIzMmQ5Mjc5YmI1OTYzNjg5NTBlYzg0MzkyZGU3OTY2Y2JkNWQxMzc3NDgzOWJmZTdhNmRjNzEwNDYzMjgzY2ZlNTc3YTcyYTE5ZDhiZDhkMTY4NTQzMGUxNmEwMDc4ZmNhZWE1MzY1NDY0ZjBkYjhhOThhODQ0MmQ2NTg0ODNlNzA5Y2RhNWZmNTk2ZThkMDQwNDQzMjg1OGEwMWYzMGU5OTE3MDVmYWM2MTM3MDU1MGQ3MTkwYjhkMWJkYjM2NjVmNjJjMzQ4YWI0ZTgwYjE0ZjgxNTRjYjMyZGFiMWJiYTZlNzdjZmJkNjA4MTQ1YmNlODc2NDhkNDllYzM2ZDZlMzU2ZjJlZWY5ODEyYWFlN2EwZmZjZjljOGVkZDkxOWIzODJhYTEwMWE5Y2JjOWMxZDVjNmIyYjY3N2M5YjFiYTVlMDU0ZTQ3YjdiN2RiM2NjZWQyZWJjODY2Y2Y4NmRjYjg5MjFkMzA5OTQxMDI3Y2ZjNGIzIn0=",
+        xt="1732352811091",
+        platform="xhs-pc-web",
+        a1="1922f161f3akc5946vixc5zs8ykvvm48u8tt7ele550000297995",
+        x1="3.8.7",
+        x4="4.44.1",
+        b1="I38rHdgsjopgIvesdVwgIC+oIELmBZ5e3VwXLgFTIxS3bqwErFeexd0ekncAzMFYnqthIhJeSBMDKutRI3KsYorWHPtGrbV0P9WfIi/eWc6eYqtyQApPI37ekmR6QL+5Ii6sdneeSfqYHqwl2qt5B0DBIx+PGDi/sVtkIxdsxuwr4qtiIhuaIE3e3LV0I3VTIC7e0utl2ADmsLveDSKsSPw5IEvsiVtJOqw8BuwfPpdeTFWOIx4TIiu6ZPwrPut5IvlaLbgs3qtxIxes1VwHIkumIkIyejgsY/WTge7eSqte/D7sDcpipedeYrDtIC6eDVw2IENsSqtlnlSuNjVtIx5e1qt3bmAeVn8LIESLIEk8+9DUIvzy4I8OIic7ZPwFIviR4o/sDLds6PwVIC7eSd7sf0k4IEve6WGMtVwUIids3s/sxZNeiVtbcUeeYVwRIvM/z06eSuwvgf7sSqweIxltIxZSouwOgVwpsoTHPW5ef7NekuwcIEosSgoe1LuMIiNeWL0sxdh5IiJsxPw9IhR9JPwJPutWIv3e1Vt1IiNs1qw5IEKsdVtFtuw4sqwFIvhvIxqzGniRKWoexVtUIhW4Ii0edqwpBlb2peJsWU4TIiGb4PtOsqwEIvNexutd+pdeVYdsVDEbIhos3odskqt8pqwQIvNeSPwvIieeT/ubIveeSBveDPtXIx0sVqw64B8qIkWJIvvsxFOekaKsDYeeSqwoIkpgIEpYzPwqIxGSIE7eirqSwnvs0VtZIhpBbut14lNedM0eYPwpmPwZIC+7IiGy/VwttVtaIC5e0pesVPwFJqwBIhW="
+    ))
+    print(t)

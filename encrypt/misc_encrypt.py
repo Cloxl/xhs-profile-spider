@@ -21,9 +21,11 @@ class CustomFieldDecrypt:
     async def base36encode(number: Integral, alphabet: Iterable[str] = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ') -> str:
         """
         将数字转换为base36编码
-        :param number: 需要base36的数字
-        :param alphabet: base36的字符集 默认: 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ
-        :return: base36编码后的内容
+        Args:
+            number: 需要base36的数字
+            alphabet: base36的字符集 默认: 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ
+        Returns:
+            base36编码后的内容
         """
         base36 = ''
         alphabet = ''.join(alphabet)
@@ -75,7 +77,8 @@ class CookieFieldEncrypt():
     async def get_a1_and_web_id(cls) -> tuple:
         """
         生成 a1 和 webid
-        :return: tuple(a1, webid)
+        Returns:
+            tuple(a1, webid)
         """
         d = hex(int(time.time() * 1000))[2:] + await CustomFieldDecrypt.random_str(30) + "5" + "0" + "000"
         g = (d + str(binascii.crc32(str(d).encode('utf-8'))))[:52]
@@ -87,7 +90,8 @@ class MiscEncrypt(CookieFieldEncrypt):
     async def x_b3_traceid() -> str:
         """
         生成 x_b3_traceid
-        :return: Trace ID
+        Returns:
+            Trace ID
         """
         characters = "abcdef0123456789"
         trace_id = ''.join(random.choice(characters) for _ in range(16))

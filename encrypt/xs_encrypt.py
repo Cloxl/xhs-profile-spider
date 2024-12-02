@@ -20,9 +20,11 @@ class XsEncrypt:
     async def encrypt_md5(url: str) -> str:
         """
         根据传入的url和params生成MD5摘要
-
-        :param url: API的url
-        :return: MD5摘要
+        
+        Args:
+            url: API的url
+        Returns:
+            MD5摘要
         """
         md5_hash = hashlib.md5(url.encode('utf-8')).hexdigest()
         return md5_hash
@@ -32,8 +34,10 @@ class XsEncrypt:
         """
         根据传入的text生成AES加密后的内容，并将其转为base64编码
 
-        :param text: 需要加密的字符串
-        :return: 加密后的base64编码字符串
+        Args:
+            text: 需要加密的字符串
+        Returns:
+            加密后的base64编码字符串
         """
         text_encoded = base64.b64encode(text.encode())
 
@@ -48,8 +52,10 @@ class XsEncrypt:
         """
         把加密后的payload转为16进制
 
-        :param encoded_data: 加密后的payload
-        :return:
+        Args:
+            encoded_data: 加密后的payload
+        Returns:
+
         """
         decoded_data = base64.b64decode(encoded_data)
         hex_string = ''.join([format(byte, '02x') for byte in decoded_data])
@@ -61,9 +67,11 @@ class XsEncrypt:
         """
         把小红书加密参数payload转16进制 再使用base64编码
 
-        :param payload: 要加密处理的payload内容
-        :param platform: 登录平台
-        :return: 加密后并进行base64编码的字符串
+        Args:
+            payload: 要加密处理的payload内容
+            platform: 登录平台
+        Returns:
+            加密后并进行base64编码的字符串
         """
         obj = {
             "signSvn": "56",
@@ -80,11 +88,12 @@ class XsEncrypt:
         """
         将传入的参数加密为小红书的xs
 
-        :param url: API请求的URL
-        :param a1: 签名参数a1
-        :param ts: 时间戳
-        :param platform: 登录平台 默认为xhs-pc-web
-        :return: 最终的加密签名字符串，前缀为“XYW_”
+        Args: url: API请求的URL
+            a1: 签名参数a1
+            ts: 时间戳
+            platform: 登录平台 默认为xhs-pc-web
+        Returns:
+            最终的加密签名字符串，前缀为“XYW_”
         """
         text = (f'x1={await XsEncrypt.encrypt_md5(url="url="+url)};'
                 f'x2=0|0|0|1|0|0|1|0|0|0|1|0|0|0|0|1|0|0|0;'
@@ -97,10 +106,11 @@ class XsEncrypt:
     async def encrypt_sign(ts: str, payload: dict) -> str:
         """
         小红书验证码签名
-
-        :param ts: xt
-        :param payload: 请求参数
-        :return: 加密后的字符串
+        Args:
+            ts: xt
+            payload: 请求参数
+        Returns:
+            加密后的字符串
         """
         url = f"{ts}test/api/redcaptcha/v2/captcha/register{json.dumps(payload, separators=(',', ':'), ensure_ascii=False)}"
 
