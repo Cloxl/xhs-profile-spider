@@ -2,10 +2,12 @@ import base64
 import json
 import random
 from code import XhsDesKeys
+
 import cv2
 import numpy as np
 from curl_cffi.requests import AsyncSession
 from pyDes import ECB, PAD_PKCS5, des
+
 from config import bg_nums
 
 
@@ -32,15 +34,19 @@ class CaptchaSolver:
 
     async def calculate_mse(self, img1, img2) -> float:
         """计算均方误差"""
-        img1_gray = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
         img2_gray = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
         img_resized = cv2.resize(img2_gray, (400, 400))
-        img1_binary = cv2.adaptiveThreshold(img1_gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-                                            cv2.THRESH_BINARY, 11, 2)
         cropped_square = img_resized[130:270, 130:270]
-        img2_binary = cv2.adaptiveThreshold(cropped_square, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-                                            cv2.THRESH_BINARY, 11, 2)
-        diff = cv2.absdiff(img1_binary, img2_binary)
+        img2_binary = cv2.adaptiveThreshold(
+            cropped_square,
+            255,
+            cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+            cv2.THRESH_BINARY,
+            11,
+            2
+        )
+
+        diff = cv2.absdiff(img1, img2_binary)
         mse = np.mean(np.square(diff))
         return mse
 
